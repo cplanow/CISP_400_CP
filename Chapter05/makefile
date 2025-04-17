@@ -1,20 +1,29 @@
+# Source and object configurations
 SRC_DIR := ./code
 OBJ_DIR := .
 SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
-LDFLAGS := -L/opt/homebrew/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
-CPPFLAGS := -g -Wall -fpermissive -std=c++17 -I/opt/homebrew/include
-CXXFLAGS :=
+
+# SFML specific paths
+SFML_PATH := /opt/homebrew/opt/sfml@2
+CPPFLAGS := -g -Wall -std=c++17 -I$(SFML_PATH)/include
+LDFLAGS := -L$(SFML_PATH)/lib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
+# Output target binary name
 TARGET := game.out
 
+# Build executable target
 $(TARGET): $(OBJ_FILES)
-	g++ -o $@ $^ $(LDFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
+# Build individual object files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	g++ $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) $(CPPFLAGS) -c -o $@ $<
 
-run:
+# Run the game
+run: $(TARGET)
 	./$(TARGET)
 
+# Clean files
 clean:
-	rm $(TARGET) *.o
+	rm -f $(TARGET) $(OBJ_FILES)
